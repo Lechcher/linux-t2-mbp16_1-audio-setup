@@ -1,0 +1,22 @@
+# Containerfile for Ubuntu/Debian T2 audio DSP install testing
+# Build: podman build -t t2-audio-test-ubuntu -f tests/ubuntu/Containerfile .
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install prerequisites needed to run install.sh inside the container
+# (bash, sudo for the script's sudo calls, ca-certificates for git/https)
+RUN apt-get update && apt-get install -y \
+    bash \
+    sudo \
+    ca-certificates \
+    coreutils \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the repository into the container
+COPY . /t2-audio-setup
+WORKDIR /t2-audio-setup
+
+# Default command: drop to a shell so the test runner can exec install.sh
+CMD ["bash"]
